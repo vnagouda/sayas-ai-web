@@ -15,7 +15,7 @@ const Unauthorized = () => {
       <Typography variant="body1" className="mt-2 mb-6 text-gray-600">
         You do not have permission to view this page.
       </Typography>
-      <Button variant="contained" color="primary" onClick={() => navigate('/')}>Go to Login</Button>
+      <Button variant="contained" color="primary" onClick={() => navigate('/sayas-ai-web')}>Go to Login</Button>
     </Box>
   );
 };
