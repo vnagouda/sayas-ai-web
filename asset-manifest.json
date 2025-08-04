@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/sayas-ai-web/static/css/main.cf890fdb.css",
-    "main.js": "/sayas-ai-web/static/js/main.bd988a70.js",
+    "main.js": "/sayas-ai-web/static/js/main.3100bf4a.js",
     "index.html": "/sayas-ai-web/index.html",
     "main.cf890fdb.css.map": "/sayas-ai-web/static/css/main.cf890fdb.css.map",
-    "main.bd988a70.js.map": "/sayas-ai-web/static/js/main.bd988a70.js.map"
+    "main.3100bf4a.js.map": "/sayas-ai-web/static/js/main.3100bf4a.js.map"
   },
   "entrypoints": [
     "static/css/main.cf890fdb.css",
-    "static/js/main.bd988a70.js"
+    "static/js/main.3100bf4a.js"
   ]
 }
