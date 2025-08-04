@@ -49,7 +49,7 @@ export default function UploadLeads() {
 
         setUploadProgress(50);
 
-        const response = await fetch("http://localhost:5000/upload-leads", {
+        const response = await fetch("http://13.239.29.113:5000/upload-leads", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ leads: jsonData }),

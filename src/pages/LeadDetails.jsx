@@ -41,8 +41,8 @@ export default function LeadDetails() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const leadRes = await fetch(`http://localhost:5000/lead/${phone}`);
-        const ocrRes = await fetch(`http://localhost:5000/ocr/${phone}`);
+        const leadRes = await fetch(`http://13.239.29.113:5000/lead/${phone}`);
+        const ocrRes = await fetch(`http://13.239.29.113:5000/ocr/${phone}`);
 
         const leadJson = await leadRes.json();
         const ocrJson = await ocrRes.json();
@@ -78,7 +78,7 @@ export default function LeadDetails() {
 
   const saveOcrData = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/ocr/${phone}`, {
+      const res = await fetch(`http://13.239.29.113:5000/ocr/${phone}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(ocrData),
