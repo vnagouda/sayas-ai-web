@@ -7,7 +7,7 @@ const Logout = () => {
   useEffect(() => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    navigate('/', { replace: true });
+    navigate('/sayas-ai-web', { replace: true });
   }, [navigate]);
 
   return null;
