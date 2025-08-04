@@ -1,7 +1,7 @@
 // Optional: Central route definitions (used if route configs grow or for lazy loading)
 
 const ROUTES = {
-  HOME: '/',
+  HOME: '/sayas-ai-web',
   LOGOUT: '/logout',
   NOT_FOUND: '*',
 
