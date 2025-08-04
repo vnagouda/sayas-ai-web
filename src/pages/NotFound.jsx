@@ -15,7 +15,7 @@ const NotFound = () => {
       <Typography variant="body1" className="mt-2 mb-6 text-gray-600">
         Sorry, the page you're looking for doesn't exist or has been moved.
       </Typography>
-      <Button variant="contained" color="primary" onClick={() => navigate('/')}>Return to Home</Button>
+      <Button variant="contained" color="primary" onClick={() => navigate('/sayas-ai-web')}>Return to Home</Button>
     </Box>
   );
 };
