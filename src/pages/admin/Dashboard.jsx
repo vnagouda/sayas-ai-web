@@ -17,7 +17,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchLeads = async () => {
       try {
-        const res = await fetch("http://sayas-ai.ddns.net/all-leads");
+        const res = await fetch("https://sayas-ai.ddns.net/all-leads");
         const data = await res.json();
         setLeads(data.leads || []);
         setIsLoading(false);

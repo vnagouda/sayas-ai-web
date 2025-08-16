@@ -49,7 +49,7 @@ export default function UploadLeads() {
 
         setUploadProgress(50);
 
-        const response = await fetch("http://sayas-ai.ddns.net/upload-leads", {
+        const response = await fetch("https://sayas-ai.ddns.net/upload-leads", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ leads: jsonData }),

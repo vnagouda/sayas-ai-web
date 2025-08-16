@@ -42,8 +42,8 @@ export default function LeadDetails() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const leadRes = await fetch(`http://sayas-ai.ddns.net/lead/${phone}`);
-        const ocrRes = await fetch(`http://sayas-ai.ddns.net/ocr/${phone}`);
+        const leadRes = await fetch(`https://sayas-ai.ddns.net/lead/${phone}`);
+        const ocrRes = await fetch(`https://sayas-ai.ddns.net/ocr/${phone}`);
 
         const leadJson = await leadRes.json();
         const ocrJson = await ocrRes.json();
@@ -79,7 +79,7 @@ export default function LeadDetails() {
 
   const saveOcrData = async () => {
     try {
-      const res = await fetch(`http://sayas-ai.ddns.net/ocr/${phone}`, {
+      const res = await fetch(`https://sayas-ai.ddns.net/ocr/${phone}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(ocrData),
