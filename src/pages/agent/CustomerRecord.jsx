@@ -10,7 +10,7 @@ export default function CustomerRecords() {
   useEffect(() => {
     const fetchLeads = async () => {
       try {
-        const res = await fetch("http://localhost:5000/all-leads");
+        const res = await fetch("http://sayas-ai.ddns.net/all-leads");
         const json = await res.json();
         setLeads(json.leads || []);
       } catch (err) {

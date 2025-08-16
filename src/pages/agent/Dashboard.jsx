@@ -30,7 +30,7 @@ export default function AgentDashboard() {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch("http://localhost:5000/all-leads");
+        const response = await fetch("http://sayas-ai.ddns.net/all-leads");
         const data = await response.json();
         setLeads(data.leads || []);
       } catch (error) {
