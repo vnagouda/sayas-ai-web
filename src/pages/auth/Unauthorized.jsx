@@ -1,24 +1,24 @@
 import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import BlockIcon from '@mui/icons-material/Block';
 import { useNavigate } from 'react-router-dom';
-import ROUTES from '../routes';
+import { routes as ROUTES } from '../../utils';
 
-const NotFound = () => {
+const Unauthorized = () => {
   const navigate = useNavigate();
 
   return (
     <Box className="min-h-screen flex flex-col justify-center items-center bg-gray-100 text-center p-8">
-      <ErrorOutlineIcon style={{ fontSize: 80 }} color="error" />
+      <BlockIcon style={{ fontSize: 80 }} color="warning" />
       <Typography variant="h3" className="mt-4 font-bold text-gray-800">
-        404 - Page Not Found
+        Unauthorized Access
       </Typography>
       <Typography variant="body1" className="mt-2 mb-6 text-gray-600">
-        Sorry, the page you're looking for doesn't exist or has been moved.
+        You do not have permission to view this page.
       </Typography>
-      <Button variant="contained" color="primary" onClick={() => navigate(ROUTES.HOME)}>Return to Home</Button>
+      <Button variant="contained" color="primary" onClick={() => navigate(ROUTES.HOME)}>Go to Login</Button>
     </Box>
   );
 };
 
-export default NotFound;
+export default Unauthorized;
