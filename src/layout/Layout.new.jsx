@@ -54,15 +54,15 @@ export default function Layout({ user, onLogout }) {
       <aside
         className={`
           fixed inset-y-0 left-0 z-40 md:z-20
-          transition-all duration-300 ease-in-out
+          transition-transform duration-300 ease-in-out
           ${collapsed ? "-translate-x-full md:translate-x-0" : "translate-x-0"}
-          ${!collapsed ? "w-[280px]" : "w-[80px]"}
+          ${collapsed ? "md:w-20" : "w-[280px] md:w-20"}
           bg-slate-900
         `}
       >
         <Sidebar
           role={user?.role}
-          collapsed={collapsed}
+          collapsed={true}
           toggleCollapse={() => setCollapsed(!collapsed)}
         />
       </aside>
@@ -70,8 +70,8 @@ export default function Layout({ user, onLogout }) {
       {/* Main Content */}
       <div
         className={`
-          relative min-h-screen transition-all duration-300
-          ${collapsed ? "md:ml-[80px]" : "md:ml-[280px]"}
+          relative min-h-screen transition-[margin] duration-300
+          ${collapsed ? "md:ml-20" : "md:ml-20"}
         `}
       >
         <Navbar 

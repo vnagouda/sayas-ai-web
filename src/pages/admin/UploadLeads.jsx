@@ -85,25 +85,30 @@ export default function UploadLeads() {
 
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 lg:p-10">
+    <div className="min-h-screen bg-slate-50 p-4 md:p-6 lg:p-8">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Upload Leads</h1>
-          <p className="text-slate-500">Import lead data from CSV files</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Upload Leads</h1>
+          <p className="text-sm md:text-base text-slate-500">Import lead data from CSV files</p>
         </div>
-        <Button variant="outline" onClick={() => navigate("/admin")}>
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Dashboard
-        </Button>
-        <Button
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate("/admin/dashboard")}
+            className="flex-1 sm:flex-none"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Dashboard
+          </Button>
+          <Button
             variant="secondary"
-            onClick={() => navigate("/all-leads")}
-            className="ml-4"
+            onClick={() => navigate("/admin/all-leads")}
+            className="flex-1 sm:flex-none"
           >
             View All Leads
-        </Button>
-
+          </Button>
+        </div>
       </div>
 
       {/* Upload Card */}

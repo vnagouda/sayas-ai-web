@@ -37,13 +37,12 @@ const Sidebar = ({ role, collapsed, toggleCollapse }) => {
     <div className="h-full bg-slate-900 text-white flex flex-col shadow-lg">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800">
-        <span className={`${collapsed ? "hidden" : "block"} font-semibold text-base md:text-lg truncate`}>
+        <span className={`${true ? "hidden" : "block"} font-semibold text-base md:text-lg truncate`}>
           Sayas AutoInsure
         </span>
         <button 
           onClick={toggleCollapse}
-          className="p-1.5 hover:bg-slate-800 rounded-lg transition-colors"
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          className="p-1.5 hover:bg-slate-800 rounded-lg transition-colors hidden md:block"
         >
           {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
         </button>
@@ -68,14 +67,11 @@ const Sidebar = ({ role, collapsed, toggleCollapse }) => {
                   ? "bg-slate-800 text-white" 
                   : "text-slate-300 hover:bg-slate-800/50 hover:text-white"
                 } 
-                ${collapsed ? "justify-center" : "justify-start gap-3"}
+                justify-center
               `}
               title={text}
             >
               <Icon className="h-5 w-5 flex-shrink-0" />
-              {!collapsed && (
-                <span className="truncate">{text}</span>
-              )}
               <span className="sr-only">{text}</span>
             </button>
           );
