@@ -1,29 +1,31 @@
 import React, { useState, useEffect } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Badge } from "../../components/ui/badge";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  Search,
-  User as UserIcon,
-  Clock,
-  Phone,
-  CheckCircle,
-  Users,
-  ArrowRight,
-} from "lucide-react";
+import { User as UserIcon, Clock, Phone, CheckCircle } from "lucide-react";
 
 export default function AgentDashboard() {
   const [leads, setLeads] = useState([]);
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  // Tabs and date range state
+  const today = new Date();
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+  const [selectedTab, setSelectedTab] = useState("year");
+  const [dateRange, setDateRange] = useState([firstDayOfMonth, lastDayOfMonth]);
+  const [startDate, endDate] = dateRange;
+  const [useCustomRange, setUseCustomRange] = useState(false);
+
+  const TAB_OPTIONS = [
+    { key: "year", label: "This Year" },
+    { key: "quarter", label: "This Quarter" },
+    { key: "month", label: "This Month" },
+    { key: "week", label: "This Week" },
+    { key: "today", label: "Today" },
+  ];
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,157 +44,191 @@ export default function AgentDashboard() {
     fetchData();
   }, []);
 
-  const filteredLeads = leads.filter((lead) => {
-    const matchesSearch =
-      lead.firstName?.toLowerCase().includes(search.toLowerCase()) ||
-      String(lead.phone || "").includes(search)
-    return matchesSearch;
-  });
+  function filterLeadsByTab(leads, tab) {
+    const now = new Date();
+    return leads.filter((lead) => {
+      if (!lead.uploaded_at) return false;
+      const date = new Date(lead.uploaded_at);
+      if (useCustomRange && startDate && endDate) {
+        return date >= startDate && date <= endDate;
+      }
+      switch (tab) {
+        case "today":
+          return date.toDateString() === now.toDateString();
+        case "week": {
+          const startOfWeek = new Date(now);
+          startOfWeek.setDate(now.getDate() - now.getDay());
+          startOfWeek.setHours(0, 0, 0, 0);
+          return date >= startOfWeek && date <= now;
+        }
+        case "month":
+          return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+        case "quarter": {
+          const quarter = Math.floor(now.getMonth() / 3);
+          return (
+            Math.floor(date.getMonth() / 3) === quarter &&
+            date.getFullYear() === now.getFullYear()
+          );
+        }
+        case "year":
+          return date.getFullYear() === now.getFullYear();
+        default:
+          return true;
+      }
+    });
+  }
+
+  const filteredLeads = filterLeadsByTab(
+    leads.filter((lead) => {
+      const matchesSearch =
+        lead.firstName?.toLowerCase().includes(search.toLowerCase()) ||
+        String(lead.phone || "").includes(search);
+      return matchesSearch;
+    }),
+    selectedTab
+  );
 
   const stats = {
-    total: leads.length,
-    completed: leads.filter((l) => l.status === "completed").length,
-    pending: leads.filter((l) => l.status === "pending").length,
-    inProgress: leads.filter((l) =>
+    total: filteredLeads.length,
+    completed: filteredLeads.filter((l) => l.status === "completed").length,
+    pending: filteredLeads.filter((l) => l.status === "pending").length,
+    inProgress: filteredLeads.filter((l) =>
       ["contacted", "aadhaar_uploaded", "details_extracted", "inProgress"].includes(l.status)
     ).length,
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 lg:p-10">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6 lg:p-10">
       <div className="max-w-6xl mx-auto">
+        {/* Unified Hero, Tabs, Stats, Progress Bar */}
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900 mb-1">All Leads</h1>
-              <p className="text-slate-600">This shows all available leads in the system</p>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 pb-2 border-b border-slate-200">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-400 to-blue-400 flex items-center justify-center">
+                <UserIcon className="w-10 h-10 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-1">Welcome, Agent</h1>
+                <p className="text-slate-600 text-sm md:text-base">Your daily goal: Complete 3 leads</p>
+                <span className="text-xs text-slate-400 italic">"Success is the sum of small efforts repeated day in and day out."</span>
+              </div>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-slate-500">Today's Progress</p>
-              <p className="text-2xl font-bold text-emerald-600">
-                {stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0}%
-              </p>
+            <div className="flex gap-1 flex-wrap items-center justify-center">
+              {TAB_OPTIONS.map((tab) => (
+                <Button
+                  key={tab.key}
+                  onClick={() => { setSelectedTab(tab.key); setUseCustomRange(false); }}
+                  className={`px-3 py-1.5 rounded-lg font-medium transition text-sm md:text-base ${
+                    selectedTab === tab.key && !useCustomRange
+                      ? "bg-emerald-600 text-white"
+                      : "bg-slate-200 text-slate-700 hover:bg-slate-300"
+                  }`}
+                  aria-pressed={selectedTab === tab.key && !useCustomRange}
+                >
+                  {tab.label}
+                </Button>
+              ))}
+              <div className="flex items-center gap-2 ml-2">
+                <span className="text-slate-700 text-xs md:text-sm">Date Range:</span>
+                <DatePicker
+                  selectsRange
+                  startDate={startDate}
+                  endDate={endDate}
+                  onChange={(update) => { setDateRange(update); setUseCustomRange(true); }}
+                  dateFormat="dd/MM/yyyy"
+                  className="px-2 py-1 pr-8 min-w-[160px] rounded border border-slate-300 text-sm bg-white"
+                  preventOpenOnFocus={true}
+                  isClearable
+                  placeholderText="Select range"
+                  calendarClassName="z-50"
+                />
+                {useCustomRange && (
+                  <Button
+                    size="sm"
+                    className="ml-2 px-2 py-1 rounded text-xs bg-slate-200 hover:bg-slate-300 text-slate-700"
+                    onClick={() => { setDateRange([firstDayOfMonth, lastDayOfMonth]); setUseCustomRange(false); }}
+                  >
+                    Reset
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <Card className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center">
-                  <UserIcon className="w-5 h-5 text-slate-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-slate-500">Total</p>
-                  <p className="text-xl font-bold">{stats.total}</p>
-                </div>
-              </div>
+          {/* Horizontal Scrollable Stats Cards */}
+          <div className="flex gap-4 overflow-x-auto pb-4 mb-6">
+            <Card className="min-w-[180px] p-4 bg-white/70 backdrop-blur-md rounded-xl flex flex-col items-center justify-center">
+              <CardHeader>
+                <CardTitle className="flex flex-col items-center justify-center">
+                  <UserIcon className="w-8 h-8 text-slate-600 mb-2" />
+                  <span className="text-xs text-slate-500">Assigned Leads</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <span className="text-2xl font-bold text-slate-900 mt-1">{stats.total}</span>
+              </CardContent>
             </Card>
-            <Card className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-amber-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-slate-500">Pending</p>
-                  <p className="text-xl font-bold text-amber-600">{stats.pending}</p>
-                </div>
-              </div>
+            <Card className="min-w-[180px] p-4 bg-white/70 backdrop-blur-md rounded-xl flex flex-col items-center justify-center">
+              <CardHeader>
+                <CardTitle className="flex flex-col items-center justify-center">
+                  <Clock className="w-8 h-8 text-amber-600 mb-2" />
+                  <span className="text-xs text-slate-500">Pending</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <span className="text-2xl font-bold text-amber-600 mt-1">{stats.pending}</span>
+              </CardContent>
             </Card>
-            <Card className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Phone className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-slate-500">In Progress</p>
-                  <p className="text-xl font-bold text-blue-600">{stats.inProgress}</p>
-                </div>
-              </div>
+            <Card className="min-w-[180px] p-4 bg-white/70 backdrop-blur-md rounded-xl flex flex-col items-center justify-center">
+              <CardHeader>
+                <CardTitle className="flex flex-col items-center justify-center">
+                  <Phone className="w-8 h-8 text-blue-600 mb-2" />
+                  <span className="text-xs text-slate-500">In Progress</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <span className="text-2xl font-bold text-blue-600 mt-1">{stats.inProgress}</span>
+              </CardContent>
             </Card>
-            <Card className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-emerald-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-slate-500">Completed</p>
-                  <p className="text-xl font-bold text-emerald-600">{stats.completed}</p>
-                </div>
-              </div>
+            <Card className="min-w-[180px] p-4 bg-white/70 backdrop-blur-md rounded-xl flex flex-col items-center justify-center">
+              <CardHeader>
+                <CardTitle className="flex flex-col items-center justify-center">
+                  <CheckCircle className="w-8 h-8 text-emerald-600 mb-2" />
+                  <span className="text-xs text-slate-500">Completed</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <span className="text-2xl font-bold text-emerald-600 mt-1">{stats.completed}</span>
+              </CardContent>
             </Card>
           </div>
 
-          {/* Search */}
-          <div className="relative mb-6">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <Input
-              placeholder="Search by name or phone..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-10"
-            />
+          {/* Progress Bar for completion rate */}
+          <div className="w-full bg-slate-200 rounded-full h-3 mb-8">
+            <div
+              className="bg-gradient-to-r from-emerald-400 to-emerald-600 h-3 rounded-full transition-all duration-500"
+              style={{ width: `${stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0}%` }}
+            ></div>
           </div>
         </div>
 
-        {/* Leads List */}
-        <div className="space-y-4">
-          <AnimatePresence>
-            {isLoading ? (
-              Array(6).fill(0).map((_, i) => (
-                <Card key={i} className="p-6 animate-pulse">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-slate-200 rounded-full"></div>
-                    <div className="flex-1">
-                      <div className="h-4 bg-slate-200 rounded w-1/3 mb-2"></div>
-                      <div className="h-3 bg-slate-200 rounded w-1/4"></div>
-                    </div>
-                    <div className="h-6 bg-slate-200 rounded w-20"></div>
-                  </div>
-                </Card>
-              ))
-            ) : filteredLeads.length > 0 ? (
-              filteredLeads.map((lead) => (
-                <motion.div
-                  key={lead.phone}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Card className="p-6 flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-medium text-slate-900 mb-1">
-                        {lead.firstName}
-                      </h3>
-                      <p className="text-slate-600 text-sm">📞 {lead.phone}</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Badge variant="outline">
-                        {lead.status?.replace(/_/g, " ") || "Unknown"}
-                      </Badge>
-                      <Button
-                        variant="outline"
-                        onClick={() =>
-                          navigate(`/records/${encodeURIComponent(lead.phone)}`)
-                        }
-                      >
-                        View <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </div>
-                  </Card>
-                </motion.div>
-              ))
-            ) : (
-              <Card className="p-12 text-center">
-                <Users className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-slate-900 mb-2">
-                  No leads found
-                </h3>
-                <p className="text-slate-600">Try adjusting your search.</p>
-              </Card>
-            )}
-          </AnimatePresence>
+        {/* Recent Activity (placeholder) */}
+        <div className="mb-8">
+          <div className="bg-white/80 rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-slate-900 mb-2">Recent Activity</h2>
+            <ul className="space-y-2">
+              <li className="text-sm text-slate-700">You called Kanya <span className="text-xs text-slate-400 ml-2">2h ago</span></li>
+              <li className="text-sm text-slate-700">Uploaded docs for Liyakat <span className="text-xs text-slate-400 ml-2">4h ago</span></li>
+              <li className="text-sm text-slate-700">Completed lead for Chhatragun <span className="text-xs text-slate-400 ml-2">Yesterday</span></li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Quick Actions (placeholder) */}
+        <div className="fixed bottom-8 right-8 z-50">
+          <Button className="bg-gradient-to-tr from-emerald-500 to-blue-500 text-white rounded-full p-4 hover:scale-105 transition flex items-center gap-2 text-lg font-bold">
+            + Quick Action
+          </Button>
         </div>
       </div>
     </div>

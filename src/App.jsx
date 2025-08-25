@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 // Auth Components
 import { Login, Logout, Unauthorized } from './pages/auth';
 
 // Admin Components
-import { AdminDashboard, UploadLeads, AllLeads } from './pages/admin';
+import AdminDashboard from './pages/admin/Dashboard';
+import UploadLeads from './pages/admin/UploadLeads';
+import AllLeads from './pages/admin/AllLeads';
+import Agents from './pages/admin/agents/Agents';
+import LeadSources from './pages/admin/sources/LeadSources';
+import Records from './pages/admin/records/Records';
+import Settings from './pages/admin/settings/Settings';
 
 // Agent Components
 import { AgentDashboard, CustomerRecord, LeadDetails } from './pages/agent';
@@ -66,22 +72,28 @@ const App = () => {
         {/* Protected routes for authenticated users */}
         {user && (
           <>
-            <Route path={ROUTES.HOME} element={<Login onLogin={handleLogin} />} />
+            <Route path={ROUTES.HOME} element={<Navigate to={user.role === 'admin' ? ROUTES.ADMIN_DASHBOARD : ROUTES.AGENT} />} />
             <Route path={ROUTES.LOGOUT} element={<Logout onLogout={handleLogout} />} />
             <Route element={<Layout user={user} onLogout={handleLogout} />}>
+              {/* Admin Routes */}
               {user.role === 'admin' && (
                 <>
-                  <Route path={ROUTES.ADMIN} element={<AdminDashboard />} />
+                  <Route path={ROUTES.ADMIN} element={<Navigate to={ROUTES.ADMIN_DASHBOARD} />} />
+                  <Route path={ROUTES.ADMIN_DASHBOARD} element={<AdminDashboard />} />
                   <Route path={ROUTES.UPLOAD_LEADS} element={<UploadLeads />} />
                   <Route path={ROUTES.ALL_LEADS} element={<AllLeads />} />
-                  <Route path={ROUTES.ANALYTICS} element={<div>Analytics Placeholder</div>} />
+                  <Route path={ROUTES.AGENTS} element={<Agents />} />
+                  <Route path={ROUTES.LEAD_SOURCES} element={<LeadSources />} />
+                  <Route path={ROUTES.RECORDS} element={<Records />} />
+                  <Route path={ROUTES.SETTINGS} element={<Settings />} />
                 </>
               )}
+              {/* Agent Routes */}
               {user.role === 'agent' && (
                 <>
                   <Route path={ROUTES.AGENT} element={<AgentDashboard />} />
                   <Route path={ROUTES.LEAD_DETAILS} element={<LeadDetails />} />
-                  <Route path={ROUTES.RECORDS} element={<CustomerRecord />} />
+                  <Route path={ROUTES.AGENT_RECORDS} element={<CustomerRecord />} />
                 </>
               )}
             </Route>

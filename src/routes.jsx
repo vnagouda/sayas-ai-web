@@ -1,20 +1,25 @@
-// Optional: Central route definitions (used if route configs grow or for lazy loading)
+import { lazy } from 'react';
 
 const ROUTES = {
   HOME: '/sayas-ai-web',
   LOGOUT: '/logout',
   NOT_FOUND: '*',
 
-  // Admin
+  // Admin routes
   ADMIN: '/admin',
-  UPLOAD_LEADS: '/upload-leads',
-  ALL_LEADS: '/all-leads',
-  ANALYTICS: '/analytics',
+  ADMIN_DASHBOARD: '/admin/dashboard',
+  UPLOAD_LEADS: '/admin/upload-leads',
+  ALL_LEADS: '/admin/all-leads',
+  ANALYTICS: '/admin/analytics',
+  AGENTS: '/admin/agents',
+  LEAD_SOURCES: '/admin/sources',
+  RECORDS: '/admin/records',
+  SETTINGS: '/admin/settings',
 
-  // Agent
+  // Agent routes
   AGENT: '/agent',
-  RECORDS: '/records',
-  LEAD_DETAILS: '/records/:phone',
+  AGENT_RECORDS: '/agent/records',
+  LEAD_DETAILS: '/agent/records/:phone',
 };
 
 export default ROUTES;

@@ -28,6 +28,10 @@ export function Alert({ variant = "default", children }) {
   );
 }
 
+export function AlertTitle({ children }) {
+  return <h5 className="font-medium mb-1">{children}</h5>;
+}
+
 export function AlertDescription({ children }) {
   return <div className="text-sm leading-relaxed">{children}</div>;
 }

@@ -9,13 +9,18 @@ const Sidebar = ({ role, collapsed, toggleCollapse }) => {
 
   const menuItems =
     role === "admin"
-      ? [{ text: "Dashboard", icon: LayoutDashboard, path: "/admin" },
-        { text: "Upload Leads", icon: UploadIcon, path: "/upload-leads" },
-        { text: "All Leads", icon: Users, path: "/all-leads" },
-      ]
+      ? [
+          { text: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
+          { text: "Upload Leads", icon: UploadIcon, path: "/admin/upload-leads" },
+          { text: "All Leads", icon: Users, path: "/admin/all-leads" },
+          { text: "Lead Sources", icon: Users, path: "/admin/sources" },
+          { text: "Records", icon: Users, path: "/admin/records" },
+          { text: "Agents", icon: Users, path: "/admin/agents" },
+          { text: "Settings", icon: Users, path: "/admin/settings" },
+        ]
       : [
           { text: "Dashboard", icon: LayoutDashboard, path: "/agent" },
-          { text: "Customer Records", icon: Users, path: "/records" },
+          { text: "Customer Records", icon: Users, path: "/agent/records" },
         ];
 
   return (
